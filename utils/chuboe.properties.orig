@@ -37,4 +37,4 @@ CHUBOE_PROP_IS_DEDICATED_WEBUI="N"
 CHUBOE_PROP_WEBUI_IDENTIFICATION="WEBUI-XX"
 CHUBOE_PROP_DEBUG_DEV_SHARE_BUCKET="changeme-dev-share/debug-artifacts"
 CHUBOE_PROP_BACKUP_RESTORE_JOBS=1
-#CHUBOE_PROP_JENKINS_AUTHCOMMAND=" --auth-no-challenge --http-user=USERNAME_HERE --http-password=API_TOKEN_HERE "
+CHUBOE_PROP_JENKINS_AUTHCOMMAND=" --auth-no-challenge --http-user=bakeryberpadmin --http-password=11010fc8530909f8dc0dca25bdb5834a8c
