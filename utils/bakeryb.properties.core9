@@ -4,3 +4,4 @@ CHUBOE_PROP_JENKINS_PROJECT="bakeryb-core-build"
 CHUBOE_PROP_JENKINS_REPO_URL="" #action: CBO needs to be moved to git
 CHUBOE_PROP_JENKINS_CURRENT_CHANGESET="" #action: CBO need to update
 CHUBOE_PROP_JENKINS_BUILD_NUMBER="" #set if needed
+CHUBOE_PROP_JENKINS_AUTHCOMMAND=" --auth-no-challenge --http-user=bakeryberpadmin --http-password=11010fc8530909f8dc0dca25bdb5834a8c"
