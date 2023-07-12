@@ -66,3 +66,32 @@ createdb $SC_ADDPG -U $SC_USER $SC_DATABASE
 pg_restore $SC_ADDPG -vU $SC_USER -d $SC_DATABASE -j $SC_BACKUP_RESTORE_JOBS latest/
 
 sudo service idempiere start
+
+# {{{ reference for quick restore on very large databases
+#This code will extract out the restore instructions from a pg_dump that used the -df option
+#The below statements remove the instructions that populate the tables
+
+#cd /opt/chuboe/idempiere-installation-script/chuboe_backup/
+#pg_restore -l  -Fd latest/ | sed '/MATERIALIZED VIEW DATA/d' > restore_ordered.lst
+#sed -i '/TABLE DATA adempiere.*deleteme.*/d' restore_ordered.lst
+#sed -i '/TABLE DATA adempiere.*delme.*/d' restore_ordered.lst
+#sed -i '/TABLE DATA adempiere ad_pinstance.*/d' restore_ordered.lst
+#sed -i '/TABLE DATA adempiere t_.*/d' restore_ordered.lst
+#sed -i '/TABLE DATA adempiere r_requestupdate.*/d' restore_ordered.lst
+#sed -i '/TABLE DATA adempiere r_requestaction.*/d' restore_ordered.lst
+#sed -i '/TABLE DATA adempiere chuboe_trialbalance.*/d' restore_ordered.lst
+#sed -i '/TABLE DATA adempiere chuboe_validation.*/d' restore_ordered.lst
+#sed -i '/TABLE DATA adempiere ad_wf_process.*/d' restore_ordered.lst
+#sed -i '/TABLE DATA adempiere ad_wf_activity.*/d' restore_ordered.lst
+#sed -i '/TABLE DATA adempiere ad_wf_eventaudit.*/d' restore_ordered.lst
+#sed -i '/TABLE DATA adempiere ad_changelog.*/d' restore_ordered.lst
+#sed -i '/TABLE DATA adempiere ad_attachment.*/d' restore_ordered.lst
+#sed -i '/TABLE DATA adempiere fact_acct_s.*/d' restore_ordered.lst
+#sed -i '/TABLE DATA adempiere fact_acct.*/d' restore_ordered.lst
+#sed -i '/TABLE DATA adempiere ad_usermail.*/d' restore_ordered.lst
+#sed -i '/TABLE DATA adempiere ad_issue.*/d' restore_ordered.lst
+#sed -i '/TABLE DATA adempiere dms_association .*/d' restore_ordered.lst
+#sed -i '/TABLE DATA adempiere dms_content .*/d' restore_ordered.lst
+
+#pg_restore -L restore_ordered.lst -v -U adempiere -d idempiere -Fd -j 3 latest/
+# )))

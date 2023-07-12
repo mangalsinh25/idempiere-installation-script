@@ -1,0 +1,54 @@
+# sudo copy this file into the /etc/cron.d/. directory.
+# uncomment the desired lines below.
+# Note: is is also ok to use /usr/bin/tee when you need a different user to write to a file. Example: echo "idempiere stuff" | sudo -u idempiere /usr/bin/tee /opt/idempiere-server/somefile.txt
+# 0 5 * * 0 ubuntu cd /opt/chuboe/idempiere-installation-script/utils; echo $'\n' | ./chuboe_restore_all_rsync.sh > /tmp/id_restore`/usr/bin/date +\%Y\%m\%d_\%H\%M\%S`.log 2>&1
+
+# This file contains many of the cron jobs you will need to support iDempiere.
+
+# Only keep last 20 backups - delete others. 
+# Note: while this ensures you do not build up lots of backups (hogging space), this does not ensure the backups are valid
+# 20 07 * * * ubuntu cd /opt/chuboe/idempiere-installation-script/chuboe_backup/archive/; ls -1tr  Exp* | head -n -20 | xargs -d  '\n' rm -f -- > /dev/null 2>&1
+
+# only keep last 40 log files - delete others.
+# 20 07 * * * ubuntu cd /opt/idempiere-server/log/; ls -1tr  *.log | head -n -40 | xargs -d  '\n' sudo rm -f -- > /dev/null 2>&1
+
+# track changed files in idempiere binaries
+# 30 07 * * * ubuntu cd /opt/chuboe/idempiere-installation-script/utils/; ./chuboe_hg_bindir.sh > /dev/null 2>&1
+
+# push logs to remote location for perminant storate
+# 20 08 * * * ubuntu /usr/bin/aws s3 sync /opt/idempiere-server/log/ s3://custname-idempiere-obfuscate/services/log/ > /dev/null 2>&1
+
+# Perform an offsite backup at 7:30AM UTC every day.
+# Please note the time of your server. AWS defaults to UTC (Central Standard Time  is UTC-6)
+# Note that if s3cmd does not work in cron, issue 'which s3cmd' and update the below script to call it using the full path.
+# 30 07 * * * ubuntu /opt/chuboe/idempiere-installation-script/utils/chuboe_backup_s3cmd.sh  > /dev/null 2>&1
+
+# Perform local backup at 7:30AM UTC every day.
+# 30 07 * * * ubuntu cd /opt/chuboe/idempiere-installation-script/utils/ && echo $'\n' | ./chuboe_backup_local.sh > /dev/null 2>&1
+
+# Perform an offsite restore at 8:30AM UTC every day. (DANGEROUS!!!!)
+#   This will drop your existing database and replace it with the offsite backup!!
+#   Only run this on a test or backup server.
+# Please note the time of your server. AWS defaults to UTC (Central Standard Time  is UTC-6)
+# Note that if s3cmd does not work in cron, issue 'which s3cmd' and update the below script to call it using the full path.
+# 30 08 * * * ubuntu /opt/chuboe/idempiere-installation-script/utils/chuboe_restore_s3cmd.sh
+
+# Upgrade your iDempiere every Saturday
+# This process is not heavily tested. 
+# Please run on a test environment before deploying to production.
+# Runs at 8:30 UTC every Saturday.
+# 30 08 * * 6 ubuntu /opt/chuboe/idempiere-installation-script/utils/chuboe_idempiere_upgrade.sh &>> /opt/idempiere-server/log/chuboe_iD_upgrade.log
+
+# Upgrade your Ubuntu OS every Saturday
+# This process is not heavily tested.
+# Runs at 8:30 UTC every Saturday.
+# 30 08 * * 6 ubuntu sudo /opt/chuboe/idempiere-installation-script/utils/chuboe_ubuntu_upgrade.sh &>> /opt/idempiere-server/log/chuboe_ubuntu_upgrade.log
+
+# Perform an offsite backup of your iDempeire directory at 7:30AM UTC every day.
+# Please note the time of your server. AWS defaults to UTC (Central Standard Time  is UTC-6)
+# 30 07 * * * ubuntu /opt/chuboe/idempiere-installation-script/utils/chuboe_hg_bindir.sh
+
+# Periodic reboot - only if needed
+# 0 0 * * * ubuntu /sbin/shutdown -r now
+# http://serverfault.com/questions/155239/how-can-i-schedule-a-reboot-in-linux
+# http://unix.stackexchange.com/questions/64280/what-is-the-difference-between-reboot-init-6-and-shutdown-r-now
